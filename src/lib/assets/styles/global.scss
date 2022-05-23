@@ -1,0 +1,17 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+:root {
+  font-size: 1.25rem;
+}
+
+body {
+  margin: 0;
+  font-family: 'Barlow', Arial, Helvetica, sans-serif;
+  color: #333;
+}
+
+button {
+  font: inherit;
+}
