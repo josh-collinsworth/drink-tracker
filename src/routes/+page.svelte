@@ -1,34 +1,26 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
+  import type { Drink } from '$lib/js/types'
+  import { loadDrinks } from '$lib/js/helpers'
+  import { HISTORY_KEY, MAX_DAILY_DRINKS, MAX_WEEKLY_DRINKS } from '$lib/js/constants'
 
-  interface Drink {
-    date: string;
-    tag?: string;
-  }
-
-  const HISTORY_KEY = 'drinkTrackerHistory'
-  const MAX_DAILY_DRINKS = 2
-  const MAX_WEEKLY_DRINKS = 7
-  let history: Drink[] = []
   let tag = ''
-
-  const retrieveHistory= (): Drink[] => JSON.parse(localStorage.getItem(HISTORY_KEY))
 
   const save = () => {
     const confirmation = confirm(`Save new drink ${tag} for today, ${new Date().toLocaleDateString('en-US')}?`)
     if (!confirmation) return
-    const items = retrieveHistory() || []
+    const items = loadDrinks() || []
     localStorage.setItem(
       HISTORY_KEY, 
       JSON.stringify(
         [{
           date: new Date().toLocaleDateString('en-US'),
-          tag: tag || null
+          tag,
+          id: crypto.randomUUID()
         },
         ...items] 
     ))
 
-    history = retrieveHistory()
+    history = loadDrinks()
   }
 
   const getRollingDates = (): string[] => {
@@ -41,56 +33,82 @@
   }
 
   const addDrink = (): void => {
+    if (!tag) return
     save()
     tag = ''
   }
 
-  $: drinksToday = history.filter(item => item.date === new Date().toLocaleDateString()).length
-  $: drinksThisWeek = history.filter(item => getRollingDates().includes(item.date)).length
+  $: drinksToday =  history.filter(item => item.date === new Date().toLocaleDateString()).length
+  $: drinksThisWeek =  history.filter(item => getRollingDates().includes(item.date)).length
 
-  onMount(() => {
-    history = retrieveHistory() || []
-  })
+  export let data: { history: [] }
+  let history: Drink[] = data.history || []
 </script>
 
 
 <section class="controls">
   <div class="controls__wrapper">
-    <form on:submit|preventDefault={addDrink}>
-      <input type="text" class="tag-input" bind:value={tag} placeholder="Tag this drink (optional)"/>
-      <button class="add-btn">Add drink</button>
-    </form>
-    <p><strong>Today:</strong> {drinksToday}/{MAX_DAILY_DRINKS}</p>
-    <p><strong>Week:</strong> {drinksThisWeek}/{MAX_WEEKLY_DRINKS}</p>
-    <hr>
-    {#if history.length}
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Total</th>
-            <th>Tags</th>
-          </tr>
-        </thead>
-        <tbody>
-          {#each getRollingDates() as date}
-            <tr>
-              <td>
-                {new Date(date).toLocaleDateString('en-US', { day: 'numeric' })}
-                {new Date(date).toLocaleDateString('en-US', { weekday: 'short' })}
-              </td>
-              <td>
-                {history.filter(item => item.date === date).length}
-              </td>
-              <td>
-                {history.filter(item => item.date === date).map(item => item.tag || 'unlisted')}
-              </td>
+    <div class="scoreboard">
+      <p>
+        <strong>Today:</strong>
+        {drinksToday}/{MAX_DAILY_DRINKS}
+        {#if drinksToday >= MAX_DAILY_DRINKS}
+          <span aria-hidden="true">
+            🛑
+          </span>
+        {/if}
+      </p>
+      <p>
+        <strong>Week:</strong>
+        {drinksThisWeek}/{MAX_WEEKLY_DRINKS}
+        {#if drinksThisWeek >= MAX_WEEKLY_DRINKS}
+          <span aria-hidden="true">
+            🛑
+          </span>
+        {/if}
+      </p>
+    </div>
 
-            </tr>
-          {/each}
-        </tbody>
-      </table>
-    {/if}
+    <form on:submit|preventDefault={addDrink}>
+      <input type="text" class="tag-input" bind:value={tag} placeholder="Tag new drink"/>
+      <button class="add-btn" disabled={!tag}>
+        Add drink
+      </button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Total</th>
+          <th>Tags</th>
+        </tr>
+      </thead>
+      <tbody>
+        {#each getRollingDates() as date}
+          {@const drinksInDate = history.filter(item => item.date === date)}
+          <tr>
+            <td>
+              {new Date(date).toLocaleDateString('en-US', { day: 'numeric' })}
+              {new Date(date).toLocaleDateString('en-US', { weekday: 'short' })}
+            </td>
+            <td>
+              {drinksInDate.length}
+            </td>
+            <td>
+              {#each drinksInDate as drink, i}
+                <a href="/{drink.id}">
+                  {drink.tag}
+                </a>
+                {#if i + 1 < drinksInDate.length}
+                  {' | '}
+                {/if}
+              {/each}
+            </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
   </div>
 </section>
 
@@ -100,23 +118,20 @@
     min-height: 100vh;
     min-height: 100dvh;
     width: 100%;
-    background: #e6e7f8;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
   }
 
-  input, button {
-    border: 2px solid currentColor;
-    border-radius: 0.2rem;
+  .scoreboard {
+    font-size: 1.375rem;
+    margin-bottom: 2rem;
   }
 
   .controls__wrapper {
     width: 100%;
-    max-width: 22rem;
-    text-align: center;
-    padding: 1rem;
+    max-width: 26rem;
   }
 
   .tag-input {
@@ -128,14 +143,13 @@
   .add-btn {
     font-size: 1.25rem;
     padding: 0.5rem 1rem;
-    margin: 1rem 0 2rem;
+    margin: 1rem 0 0;
     font-weight: bold;
   }
 
   table {
     text-align: left;
     border-collapse: collapse;
-    cellpadding: 0;
     margin-top: 2rem;
     width: 100%;
     font-size: 0.8rem;
@@ -159,13 +173,6 @@
   }
 
   p {
-    text-align: center;
     margin: 0;
-  }
-
-  hr {
-    margin: 2rem;
-    border: 0;
-    border-top: 1px solid currentColor;
   }
 </style>  

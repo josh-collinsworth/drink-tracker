@@ -1,17 +1,75 @@
+:root {
+  --color-100: #CAF0F8;
+  --color-200: #ADE8F4;
+  --color-300: #90E0EF;
+  --color-400: #48CAE4;
+  --color-500: #00B4D8;
+  --color-600: #0096C7;
+  --color-700: #0077B6;
+  --color-800: #023E8A;
+  --color-900: #03045E;
+  
+  font-size: 1.25rem;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
-:root {
-  font-size: 1.25rem;
+*:focus {
+  outline: 2px solid var(--color-700);
+  outline-offset: 2px;
 }
 
 body {
   margin: 0;
-  font-family: 'Barlow', Arial, Helvetica, sans-serif;
-  color: #333;
+  font-family: 'DM Sans', Arial, Helvetica, sans-serif;
+  color: var(--color-900);
+  background: var(--color-100);
 }
 
 button {
   font: inherit;
+}
+
+main {
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  margin: 0;
+  padding: 1rem 1rem;
+}
+
+h1 {
+  margin: 0;
+  line-height: 1;
+}
+
+input, button {
+  color: inherit;
+  font-family: inherit;
+  border: 2px solid var(--color-800);
+  border-radius: 0.2rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  background: var(--color-800);
+  border-color: var(--color-800);
+  color: var(--color-100);
+
+  &:disabled {
+    // color: var(--color-500);
+    background-color: var(--color-400);
+    border-color: var(--color-400);
+  }
+}
+
+a,
+a:visited {
+  color: var(--color-700);
+}
+
+h1, h2, h3, h4, h5, h6, th, button, strong {
+  font-family: 'DM Serif Display', 'DM Sans', Arial, Helvetica, sans-serif;
 }
