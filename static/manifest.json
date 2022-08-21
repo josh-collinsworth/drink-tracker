@@ -1,0 +1,22 @@
+{
+  "background_color": "#caf0f8",
+  "description": "Used to track your drinks consumed.",
+  "dir": "ltr",
+  "display": "fullscreen",
+  "name": "Drink Tracker",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "Drink Tracker",
+  "start_url": "/",
+  "theme_color": "#0077b6",
+  "categories": [],
+  "screenshots": [],
+  "icons": [
+    {
+      "src": "./favicon.png",
+      "type": "image/png",
+      "sizes": "128x128"
+    }
+  ],
+  "shortcuts": []
+}
