@@ -85,6 +85,9 @@
             </td>
             <td>
               {drinksInDate.length}
+              {#if drinksInDate.length >= MAX_DAILY_DRINKS}
+                🛑
+              {/if}
             </td>
             <td>
               {#each drinksInDate as drink, i}
