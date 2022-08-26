@@ -25,7 +25,7 @@ const saveDrink = () => {
 
   const allDrinks = loadDrinks()
   const drinksToSave = allDrinks.map(d => {
-    if (d.id !== drink.id) return drink
+    if (d.id !== drink.id) return d
     return {
       id: drink.id,
       tag: drink.tag,
