@@ -45,7 +45,7 @@ h1 {
   line-height: 1;
 }
 
-input, button {
+input, button, select {
   color: inherit;
   font-family: inherit;
   border: 2px solid var(--color-800);
@@ -53,16 +53,26 @@ input, button {
 }
 
 button {
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.75rem;
   background: var(--color-800);
   border-color: var(--color-800);
   color: var(--color-100);
+
+  span[aria-hidden=true] {
+    margin-right: 0.5rem;
+  }
 
   &:disabled {
     // color: var(--color-500);
     background-color: var(--color-400);
     border-color: var(--color-400);
   }
+}
+
+select {
+  padding: 0.5rem;
+  background: var(--color-200);
+  font-size: 0.8rem;
 }
 
 a,

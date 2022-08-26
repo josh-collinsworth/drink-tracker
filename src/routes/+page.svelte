@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Drink } from '$lib/js/types'
-  import { loadDrinks } from '$lib/js/helpers'
+  import { loadDrinks, getRollingDates } from '$lib/js/helpers'
   import { HISTORY_KEY, MAX_DAILY_DRINKS, MAX_WEEKLY_DRINKS } from '$lib/js/constants'
 
   let tag = ''
@@ -21,15 +21,6 @@
     ))
 
     history = loadDrinks()
-  }
-
-  const getRollingDates = (): string[] => {
-    const dates = [...Array(7)].map((_, i) => {
-      const d = new Date()
-      d.setDate(d.getDate() - i)
-      return d.toLocaleDateString()
-    })
-    return dates
   }
 
   const addDrink = (): void => {
