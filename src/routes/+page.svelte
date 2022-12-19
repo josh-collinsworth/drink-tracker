@@ -7,7 +7,7 @@
   let date: string = getRollingDates()[0]
 
   const save = () => {
-    const confirmation = confirm(`Save new drink ${tag} for today, ${new Date().toLocaleDateString('en-US')}?`)
+    const confirmation = confirm(`Save new entry ${tag} on ${dayName}, ${shortDate}?`)
     if (!confirmation) return false
     const items = loadDrinks() || []
     localStorage.setItem(
@@ -31,6 +31,8 @@
 
   $: drinksToday =  history.filter(item => item.date === new Date().toLocaleDateString()).length
   $: drinksThisWeek =  history.filter(item => getRollingDates().includes(item.date)).length
+  $: dayName = new Date(date).toLocaleDateString('en-US', { weekday: 'long' })
+  $: shortDate = date.slice(0, -5)
 
   export let data: { history: [] }
   let history: Drink[] = data.history || []
@@ -69,7 +71,7 @@
         <select bind:value={date}>
           {#each getRollingDates() as date, i}
           <option value={date} default={!i}>
-            {new Date(date).toLocaleDateString('en-US', { weekday: 'short' })} {date.slice(0, -5)}
+            {dayName} {shortDate}
           </option>
           {/each}
         </select>
