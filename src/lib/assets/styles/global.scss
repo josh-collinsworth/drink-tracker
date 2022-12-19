@@ -23,7 +23,7 @@
 
 body {
   margin: 0;
-  font-family: 'DM Sans', Arial, Helvetica, sans-serif;
+  font-family: 'Inter', Arial, Helvetica, sans-serif;
   color: var(--color-900);
   background: var(--color-100);
 }
@@ -81,5 +81,5 @@ a:visited {
 }
 
 h1, h2, h3, h4, h5, h6, th, button, strong {
-  font-family: 'DM Serif Display', 'DM Sans', Arial, Helvetica, sans-serif;
+  font-weight: bold;
 }

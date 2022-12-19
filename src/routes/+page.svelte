@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Drink } from '$lib/js/types'
-  import { loadDrinks, getRollingDates, getWeekdayNameFromDate } from '$lib/js/helpers'
+  import { loadDrinks, getRollingDates } from '$lib/js/helpers'
   import { HISTORY_KEY, MAX_DAILY_DRINKS, MAX_WEEKLY_DRINKS } from '$lib/js/constants'
 
   let tag = ''
@@ -61,15 +61,15 @@
     </div>
 
     <form on:submit|preventDefault={addDrink}>
-      <input type="text" class="tag-input" bind:value={tag} placeholder="Tag new drink"/>
+      <input type="text" class="tag-input" bind:value={tag} placeholder="Log new entry" autocomplete="on" />
       <div class="btn-container">
         <button class="add-btn" disabled={!tag}>
-          Log drink
+          Submit
         </button>
         <select bind:value={date}>
           {#each getRollingDates() as date, i}
           <option value={date} default={!i}>
-            {getWeekdayNameFromDate(date)} {date}
+            {new Date(date).toLocaleDateString('en-US', { weekday: 'short' })} {date.slice(0, -5)}
           </option>
           {/each}
         </select>
@@ -144,14 +144,14 @@
   }
 
   .add-btn {
-    font-size: 1.25rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
     padding: 0.5rem 1rem;
     font-weight: bold;
   }
 
   .btn-container {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     margin-top: 1rem;
