@@ -1,5 +1,5 @@
 <script lang="ts">
-import { getRollingDates, loadDrinks } from '$lib/js/helpers'
+import { getRollingDates, loadDrinks, getWeekdayNameFromDate } from '$lib/js/helpers'
 import { HISTORY_KEY } from '$lib/js/constants'
 import { goto } from '$app/navigation'
 
@@ -19,10 +19,6 @@ const deleteDrink = () => {
 }
 
 const saveDrink = () => {
-  // if (!drink.date.match())
-  const confirmation = confirm(`Update ${drink.tag}?`)
-  if (!confirmation) return
-
   const allDrinks = loadDrinks()
   const drinksToSave = allDrinks.map(d => {
     if (d.id !== drink.id) return d
@@ -49,7 +45,7 @@ const saveDrink = () => {
     <select bind:value={drink.date}>
       {#each getRollingDates() as date}
         <option value={date}>
-          {date}
+          {getWeekdayNameFromDate(date)} {date}
         </option>
       {/each}
     </select>

@@ -14,7 +14,12 @@ const getRollingDates = (): string[] => {
   return dates
 }
 
+const getWeekdayNameFromDate = (date: string): string => {
+  return new Date(date).toLocaleDateString('en-US', { weekday: 'long' })
+}
+
 export {
   loadDrinks,
   getRollingDates,
+  getWeekdayNameFromDate,
 }

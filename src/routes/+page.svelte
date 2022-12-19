@@ -1,32 +1,32 @@
 <script lang="ts">
   import type { Drink } from '$lib/js/types'
-  import { loadDrinks, getRollingDates } from '$lib/js/helpers'
+  import { loadDrinks, getRollingDates, getWeekdayNameFromDate } from '$lib/js/helpers'
   import { HISTORY_KEY, MAX_DAILY_DRINKS, MAX_WEEKLY_DRINKS } from '$lib/js/constants'
 
   let tag = ''
+  let date: string = getRollingDates()[0]
 
   const save = () => {
     const confirmation = confirm(`Save new drink ${tag} for today, ${new Date().toLocaleDateString('en-US')}?`)
-    if (!confirmation) return
+    if (!confirmation) return false
     const items = loadDrinks() || []
     localStorage.setItem(
       HISTORY_KEY, 
       JSON.stringify(
         [{
-          date: new Date().toLocaleDateString('en-US'),
+          date,
           tag,
           id: crypto.randomUUID()
         },
         ...items] 
     ))
-
+    tag = ''
     history = loadDrinks()
   }
 
   const addDrink = (): void => {
     if (!tag) return
     save()
-    tag = ''
   }
 
   $: drinksToday =  history.filter(item => item.date === new Date().toLocaleDateString()).length
@@ -62,9 +62,18 @@
 
     <form on:submit|preventDefault={addDrink}>
       <input type="text" class="tag-input" bind:value={tag} placeholder="Tag new drink"/>
-      <button class="add-btn" disabled={!tag}>
-        Add drink
-      </button>
+      <div class="btn-container">
+        <button class="add-btn" disabled={!tag}>
+          Log drink
+        </button>
+        <select bind:value={date}>
+          {#each getRollingDates() as date, i}
+          <option value={date} default={!i}>
+            {getWeekdayNameFromDate(date)} {date}
+          </option>
+          {/each}
+        </select>
+      </div>
     </form>
 
     <table>
@@ -137,8 +146,15 @@
   .add-btn {
     font-size: 1.25rem;
     padding: 0.5rem 1rem;
-    margin: 1rem 0 0;
     font-weight: bold;
+  }
+
+  .btn-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
   }
 
   table {
